@@ -1,0 +1,67 @@
+body {
+  background-color: #f4f9ff;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.historial-container {
+  background-color: white;
+  padding: 2rem 3rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 1100px;
+  overflow-x: auto;
+}
+
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: #0d47a1;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+thead {
+  background-color: #0d47a1;
+  color: white;
+}
+
+th, td {
+  padding: 0.75rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid #ddd;
+}
+
+tr:hover {
+  background-color: #f1f8ff;
+}
+
+.badge {
+  padding: 0.3rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  display: inline-block;
+  color: white;
+}
+
+.badge.entregado {
+  background-color: #2e7d32; /* verde */
+}
+
+.badge.en-transito {
+  background-color: #0277bd; /* azul claro */
+}
+
+.badge.pendiente {
+  background-color: #f9a825; /* ámbar */
+}

@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Historial de Chats</title>
+  <link rel="stylesheet" href="chat.css">
+</head>
+<body>
+  <div class="chat-container">
+    <!-- Sidebar: Historial -->
+    <aside class="chat-history">
+      <h2>Chats</h2>
+      <ul id="chatList">
+        <li onclick="cargarChat('cliente1')">📦 Cliente 1</li>
+        <li onclick="cargarChat('cliente2')">📦 Cliente 2</li>
+        <li onclick="cargarChat('soporte')">🛠 Soporte UCarga</li>
+      </ul>
+    </aside>
+
+    <!-- Panel de chat -->
+    <section class="chat-view">
+      <div id="mensajes" class="messages">
+        <p class="empty">Selecciona un chat para ver los mensajes.</p>
+      </div>
+
+      <div class="chat-input chat-controls hidden" id="chatControls">
+        <div class="adjuntar-menu-container">
+            <label class="adjuntar" id="btnAdjuntar">📎</label>
+
+            <div class="adjuntar-opciones hidden" id="menuAdjuntar">
+            <label>
+                📄<span>Doc</span>
+                <input type="file" accept=".pdf,.docx,.xlsx" hidden id="fileDoc">
+            </label>
+            <label>
+                🖼️<span>Img</span>
+                <input type="file" accept=".jpg,.jpeg,.png" hidden id="fileImg">
+            </label>
+            </div>
+        </div>
+
+        <input type="text" id="mensajeInput" placeholder="Escribe un mensaje...">
+        <button onclick="enviarMensaje()">Enviar</button>
+        </div>
+
+    </section>
+  </div>
+
+  <script>
+    let chatActual = '';
+    const MAX_SIZE_MB = 10;
+
+    const chats = {
+      cliente1: [
+        { emisor: 'yo', texto: 'Hola, ¿recibiste el paquete?' },
+        { emisor: 'otro', texto: 'Sí, todo bien. Gracias.' },
+      ],
+      cliente2: [
+        { emisor: 'yo', texto: 'Buenas tardes, su envío está en camino.' },
+        { emisor: 'otro', texto: 'Perfecto. ¿Llega mañana?' },
+        { emisor: 'yo', texto: 'Sí, antes del mediodía.' },
+      ],
+      soporte: [
+        { emisor: 'yo', texto: 'Tengo problemas con una guía.' },
+        { emisor: 'otro', texto: '¿Cuál es el número de seguimiento?' },
+        { emisor: 'yo', texto: 'TRYP-8821' },
+      ],
+    };
+
+    function cargarChat(clave) {
+      chatActual = clave;
+      renderizarChat();
+      document.getElementById('chatControls').classList.remove('hidden');
+    }
+
+    function renderizarChat() {
+      const mensajes = chats[chatActual] || [];
+      const contenedor = document.getElementById('mensajes');
+      contenedor.innerHTML = '';
+
+      mensajes.forEach(msg => {
+        const bubble = document.createElement('div');
+        bubble.className = 'bubble ' + (msg.emisor === 'yo' ? 'out' : 'in');
+
+        if (msg.archivo) {
+          if (msg.archivo.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = msg.archivo.url;
+            img.style.maxWidth = '100%';
+            bubble.appendChild(img);
+          } else if (msg.archivo.type === 'application/pdf') {
+            const frame = document.createElement('iframe');
+            frame.src = msg.archivo.url;
+            frame.style.width = '100px';
+            frame.style.height = '100px';
+            bubble.appendChild(frame);
+          } else {
+            const span = document.createElement('span');
+            span.textContent = msg.archivo.name;
+            bubble.appendChild(span);
+          }
+        }
+
+        if (msg.texto) {
+          const texto = document.createElement('p');
+          texto.textContent = msg.texto;
+          bubble.appendChild(texto);
+        }
+
+        contenedor.appendChild(bubble);
+      });
+
+      contenedor.scrollTop = contenedor.scrollHeight;
+    }
+
+    function enviarMensaje() {
+      const input = document.getElementById('mensajeInput');
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      const mensaje = { emisor: 'yo', texto };
+      chats[chatActual].push(mensaje);
+
+      input.value = '';
+      renderizarChat();
+    }
+
+    // Manejo de adjuntos
+    const btnAdjuntar = document.getElementById('btnAdjuntar');
+    const menuAdjuntar = document.getElementById('menuAdjuntar');
+    const fileDoc = document.getElementById('fileDoc');
+    const fileImg = document.getElementById('fileImg');
+
+    btnAdjuntar.addEventListener('click', () => {
+      menuAdjuntar.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', (e) => {
+      if (!btnAdjuntar.contains(e.target) && !menuAdjuntar.contains(e.target)) {
+        menuAdjuntar.classList.add('hidden');
+      }
+    });
+
+    fileDoc.addEventListener('change', () => handleFile(fileDoc.files[0]));
+    fileImg.addEventListener('change', () => handleFile(fileImg.files[0]));
+
+    function handleFile(file) {
+      if (!file) return;
+
+      if (file.size > MAX_SIZE_MB * 1024 * 1024) {
+        alert("El archivo supera el límite de 10MB.");
+        return;
+      }
+
+      const mensaje = {
+        emisor: 'yo',
+        archivo: {
+          name: file.name,
+          type: file.type,
+          url: URL.createObjectURL(file)
+        }
+      };
+
+      chats[chatActual].push(mensaje);
+      renderizarChat();
+    }
+  </script>
+</body>
+</html>

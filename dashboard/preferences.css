@@ -1,0 +1,71 @@
+body {
+  background-color: #f4f9ff;
+  font-family: 'Segoe UI', sans-serif;
+  margin: 0;
+  padding: 2rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+.preferencias-container {
+  background-color: white;
+  padding: 2rem 3rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  width: 100%;
+  max-width: 700px;
+}
+
+h2 {
+  text-align: center;
+  color: #0d47a1;
+  margin-bottom: 1.5rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+section h3 {
+  color: #0d47a1;
+  margin-bottom: 0.5rem;
+}
+
+label {
+  display: block;
+  margin: 0.5rem 0;
+  font-weight: normal;
+}
+
+select {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  margin-right: 0.5rem;
+}
+
+button {
+  align-self: center;
+  margin-top: 1rem;
+  background-color: #0d47a1;
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button:hover {
+  background-color: #1565c0;
+}

@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Publicar nuevo cargo</title>
+  <link rel="stylesheet" href="newpost.css">
+</head>
+<body>
+  <div class="form-container">
+    <h2>Publicar nuevo cargo</h2>
+    <form>
+      <!-- Datos básicos -->
+       <!-- Empresa -->
+      <label for="categoria">Categoría</label>
+      <select id="categoria" name="categoria">
+        <option value="">Seleccione una categoría</option>
+        <option value="Maquinaria pesada">Maquinaria pesada</option>
+        <option value="Mercancia comercial">Mercancía comercial</option>
+        <option value="Contenedores">Contenedores</option>
+        <option value="Carga refrigerada">Carga refrigerada</option>
+        <option value="Ganado">Ganado</option>
+        <option value="Instrumentos musicales">Instrumentos musicales</option>
+        <option value="Vehículos">Vehículos</option>
+        <option value="Muebles">Muebles</option>
+        <option value="Obras de arte">Obras de arte</option>
+        <option value="Otros">Otros</option>
+      </select>
+
+      <div class="autocomplete-group">
+        <label for="origen">Dirección de origen</label>
+        <input type="text" id="origen" name="origen" required>
+        <ul id="origen-results" class="autocomplete-results"></ul>
+      </div>
+
+      <div class="autocomplete-group">
+        <label for="destino">Dirección de destino</label>
+        <input type="text" id="destino" name="destino" required>
+        <ul id="destino-results" class="autocomplete-results"></ul>
+      </div>
+
+      <label for="descripcion">Descripción del cargo (máx. 300 palabras)</label>
+      <textarea id="descripcion" name="descripcion" maxlength="1500" rows="5" required></textarea>
+
+      <label for="peso">Peso (kg)</label>
+      <input type="number" id="peso" name="peso" min="0" step="0.1" required>
+
+      <div class="dimensiones">
+        <label>Dimensiones (cm)</label>
+        <div class="dim-inputs">
+          <input type="number" placeholder="Alto" name="alto" min="0" required>
+          <input type="number" placeholder="Ancho" name="ancho" min="0" required>
+          <input type="number" placeholder="Largo" name="largo" min="0" required>
+        </div>
+      </div>
+
+      <!-- Características -->
+      <fieldset class="opciones_pago">
+        <legend>Categoría de pago</legend>
+        <label><input type="radio" name="caracteristicas" value="fijo" checked> Precio fijo</label>
+        <label><input type="radio" name="caracteristicas" value="subasta"> Precio subastable</label>
+        <label><input type="radio" name="caracteristicas" value="competencia"> Precio por competencia</label>
+      </fieldset>
+
+      <label for="precio">Monto a pagar</label>
+      <input type="number" id="precio" name="precio" min="0" step="0.01" required>
+
+      <!-- Características -->
+      <fieldset class="opciones">
+        <legend>Características del cargo</legend>
+        <label><input type="checkbox" name="caracteristicas" value="apilable"> Apilable</label>
+        <label><input type="checkbox" name="caracteristicas" value="fragil"> Frágil</label>
+        <label><input type="checkbox" name="caracteristicas" value="compartido"> Puede ser compartido</label>
+      </fieldset>
+
+      <!-- Empresa -->
+      <label for="empresa">Selecciona una empresa (opcional)</label>
+      <select id="empresa" name="empresa">
+        <option value=0>Libre</option>
+        <option value=1>Cargas Express</option>
+        <option value=2>Logística Azul</option>
+        <option value=3>Rápido Norte</option>
+      </select>
+
+      <!-- Dropzone de Imágenes -->
+      <label for="dropzone">Adjuntar imágenes (máx. 6)</label>
+      <div id="dropzone" class="dropzone">
+        <p>Arrastra aquí tus imágenes o haz clic para seleccionar</p>
+        <input type="file" id="archivos" name="imagenes[]" accept=".jpg,.jpeg,.png" multiple hidden>
+      </div>
+      <div id="preview" class="preview"></div>
+
+      <!-- Dropzone de Documentos Privados -->
+      <label for="dropzoneDocs">Documentos privados (máx. 3)</label>
+      <div id="dropzoneDocs" class="dropzone">
+        <p>Arrastra aquí tus documentos o haz clic para seleccionar</p>
+        <input type="file" id="docs" name="documentos[]" accept=".pdf,.doc,.docx" multiple hidden>
+      </div>
+      <div id="previewDocs" class="preview"></div>
+
+      <!-- Guardar cargo -->
+      <fieldset class="guardar">
+        <legend>¿Deseas guardar este cargo para futuros envíos?</legend>
+        <label><input type="radio" name="guardar" value="si"> Sí</label>
+        <label><input type="radio" name="guardar" value="no" checked> No</label>
+      </fieldset>
+
+      <button type="submit">Publicar cargo</button>
+    </form>
+  </div>
+
+  <script>
+    function setupAutocomplete(inputId, resultId) {
+      const input = document.getElementById(inputId);
+      const resultBox = document.getElementById(resultId);
+      let timer;
+
+      input.addEventListener('input', () => {
+        clearTimeout(timer);
+        const query = input.value.trim();
+        if (query.length < 3) {
+          resultBox.innerHTML = '';
+          return;
+        }
+
+        timer = setTimeout(async () => {
+          const res = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}&addressdetails=1&limit=5`);
+          const data = await res.json();
+
+          resultBox.innerHTML = '';
+          data.forEach(place => {
+            const li = document.createElement('li');
+            li.textContent = place.display_name;
+            li.onclick = () => {
+              input.value = place.display_name;
+              resultBox.innerHTML = '';
+            };
+            resultBox.appendChild(li);
+          });
+        }, 400);
+      });
+
+      input.addEventListener('blur', () => {
+        setTimeout(() => resultBox.innerHTML = '', 200);
+      });
+    }
+
+    setupAutocomplete('origen', 'origen-results');
+    setupAutocomplete('destino', 'destino-results');
+
+
+
+    const MAX_IMG = 6;
+    const MAX_DOCS = 3;
+    let imagenes = [];
+    let documentos = [];
+
+    const dropImg = document.getElementById('dropzone');
+    const inputImg = document.getElementById('archivos');
+    const previewImg = document.getElementById('preview');
+
+    const dropDoc = document.getElementById('dropzoneDocs');
+    const inputDoc = document.getElementById('docs');
+    const previewDoc = document.getElementById('previewDocs');
+
+    function setupDropzone(dropzone, input, handleFiles) {
+      dropzone.addEventListener('click', () => input.click());
+      dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.style.backgroundColor = '#bbdefb'; });
+      dropzone.addEventListener('dragleave', () => dropzone.style.backgroundColor = '#e3f2fd');
+      dropzone.addEventListener('drop', e => {
+        e.preventDefault();
+        dropzone.style.backgroundColor = '#e3f2fd';
+        handleFiles([...e.dataTransfer.files]);
+      });
+      input.addEventListener('change', () => {
+        handleFiles([...input.files]);
+        input.value = "";
+      });
+    }
+
+    function renderPreview(file, targetArray, container, typeLimit) {
+      const item = document.createElement('div');
+      item.className = 'preview-item';
+
+      const removeBtn = document.createElement('button');
+      removeBtn.className = 'remove-btn';
+      removeBtn.innerHTML = '&times;';
+      removeBtn.onclick = () => {
+        item.remove();
+        const index = targetArray.indexOf(file);
+        if (index > -1) targetArray.splice(index, 1);
+      };
+
+      if (file.type.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = URL.createObjectURL(file);
+        item.appendChild(img);
+      } else {
+        const span = document.createElement('span');
+        span.textContent = file.name;
+        item.appendChild(span);
+      }
+
+      item.appendChild(removeBtn);
+      container.appendChild(item);
+    }
+
+    function handleImages(files) {
+      if (imagenes.length + files.length > MAX_IMG) {
+        alert(`Máximo ${MAX_IMG} imágenes permitidas`);
+        return;
+      }
+      files.forEach(file => {
+        if (!file.type.startsWith('image/')) return;
+        imagenes.push(file);
+        renderPreview(file, imagenes, previewImg, MAX_IMG);
+      });
+    }
+
+    function handleDocs(files) {
+      if (documentos.length + files.length > MAX_DOCS) {
+        alert(`Máximo ${MAX_DOCS} documentos permitidos`);
+        return;
+      }
+      files.forEach(file => {
+        if (!file.type.match(/pdf|doc|docx/)) return;
+        documentos.push(file);
+        renderPreview(file, documentos, previewDoc, MAX_DOCS);
+      });
+    }
+
+    setupDropzone(dropImg, inputImg, handleImages);
+    setupDropzone(dropDoc, inputDoc, handleDocs);
+
+    //  ----- Zona de carga al back -----
+    document.querySelector('form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const form = e.target;
+
+    const formData = new FormData();
+
+    // Campos del formulario
+      const postPayload = {
+      status: 'Creado',
+      category: form.categoria.value,
+      address_ori: form.origen.value,
+      address_dest: form.destino.value,
+      description_prod: form.descripcion.value,
+      weight_prod: parseFloat(form.peso.value),
+      high_prod: parseFloat(form.alto.value),
+      broad_prod: parseFloat(form.ancho.value),
+      long_prod: parseFloat(form.largo.value),
+      price_check: form.querySelector('input[name="caracteristicas"]:checked')?.value || '',
+      final_price: parseFloat(form.precio.value),
+      stackable: form.querySelector('input[value="apilable"]')?.checked || false,
+      fragile: form.querySelector('input[value="fragil"]')?.checked || false,
+      shared: form.querySelector('input[value="compartido"]')?.checked || false,
+      id_company: parseInt(form.empresa.value) || null,
+      save_post: form.querySelector('input[name="guardar"]:checked')?.value === 'si'
+    };
+
+    formData.append('post', JSON.stringify(postPayload));
+
+    // Agregar imágenes
+    imagenes.forEach((file, index) => {
+      if (index < 6) {
+        formData.append(`img_${index + 1}`, file);
+      }
+    });
+
+    // Agregar documentos
+    documentos.forEach((file, index) => {
+      if (index < 3) {
+        formData.append(`sensitive_${index + 1}`, file);
+      }
+    });
+
+    try {
+      const res = await fetch('https://973a9eb80129.ngrok-free.app/api/posts/create', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await res.json();
+      console.log(data);
+
+      if (data.success) {
+        alert('Cargo publicado exitosamente');
+        form.reset();
+        previewImg.innerHTML = '';
+        previewDoc.innerHTML = '';
+        imagenes = [];
+        documentos = [];
+      } else {
+        alert('Error: ' + (data.message || 'No se pudo publicar el cargo'));
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Hubo un problema al enviar el formulario');
+    }
+  });
+  </script>
+</body>
+</html>

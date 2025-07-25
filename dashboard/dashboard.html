@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard</title>
+  <link rel="stylesheet" href="dashboard.css" />
+</head>
+<body>
+  <div class="dashboard-container">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="logo">UCarga</div>
+
+      <div class="menu-section">
+        <h4>Ventas</h4>
+        <ul>
+          <li><a href="inicio.html" target="contenido">📊 Inicio</a></li>
+          <li><a href="perfil.html" target="contenido">👤 Perfil</a></li>
+        </ul>
+      </div>
+
+      <div class="menu-section">
+        <h4>Admin</h4>
+        <ul>
+          <!-- <li><a href="#">📦 Inventario</a></li>
+          <li><a href="#">❗ Incidencias</a></li>
+          <li><a href="#">💲 Cambio de precios</a></li> -->
+          <li><a href="newpost.html" target="contenido">➕ Creación de envio</a></li>
+          <li><a href="history.html" target="contenido">🚚 Envíos pendientes</a></li>
+          <li><a href="chat.html" target="contenido">📥 Mensajes</a></li>
+          <li><a href="preferences.html" target="contenido">⚙️ Configuración</a></li>
+        </ul>
+      </div>
+
+      <div class="logout">
+        <a href="#">🔓 Cerrar sesión</a>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="main">
+      <header class="topbar">
+        <div class="user-info">
+          <span class="user-name">Luis Cocon</span>
+          <span class="user-email">luis.cocon@gmail.com</span>
+        </div>
+        <a href="#" class="help-link">Ayuda</a>
+      </header>
+
+      <main class="content-area">
+        <iframe name="contenido" src="inicio.html" frameborder="0"></iframe>
+      </main>
+    </div>
+  </div>
+
+  <script src="dashboard.js"></script>
+</body>
+</html>

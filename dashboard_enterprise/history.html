@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Historial de cargos</title>
+  <link rel="stylesheet" href="history.css">
+  <style>
+    .mensaje-vacio {
+      text-align: center;
+      font-size: 1.2rem;
+      color: #666;
+      margin-top: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="historial-container">
+    <h2>Historial de cargos</h2>
+
+    <!-- Mensaje si no hay datos -->
+    <div id="mensaje-vacio" class="mensaje-vacio" style="display: none;">
+      Aún está vacío... por favor, ¡realicé su primer envio!
+    </div>
+
+    <!-- Tabla de historial -->
+    <table id="tabla-historial" style="display: none;">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Origen</th>
+          <th>Destino</th>
+          <th>Descripción</th>
+          <th>Peso (kg)</th>
+          <th>Dimensiones (cm)</th>
+          <th>Precio</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-cargos">
+        <!-- Cargos dinámicos -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    async function cargarCargos() {
+      try {
+        //const res = await fetch('https://c7bed46046a0.ngrok-free.app/api/posts/getall');
+        const res = await fetch('https://973a9eb80129.ngrok-free.app/api/posts/getall');
+        const data = await res.json();
+
+        const tbody = document.getElementById('tabla-cargos');
+        const tabla = document.getElementById('tabla-historial');
+        const mensaje = document.getElementById('mensaje-vacio');
+
+        tbody.innerHTML = '';
+
+        if (!data.success || !Array.isArray(data.data) || data.data.length === 0) {
+          // No hay datos
+          tabla.style.display = 'none';
+          mensaje.style.display = 'block';
+          return;
+        }
+
+        // Hay datos: mostrar tabla y ocultar mensaje
+        tabla.style.display = 'table';
+        mensaje.style.display = 'none';
+
+        data.data.forEach((post, index) => {
+          const row = document.createElement('tr');
+
+          const descripcionCorta = post.description_prod.length > 40
+            ? post.description_prod.substring(0, 40) + '...'
+            : post.description_prod;
+
+          //const dimensiones = `${post.high_prod} x ${post.broad_prod} x ${post.long_prod}`;
+
+          row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${post.address_ori}</td>
+            <td>${post.address_dest}</td>
+            <td>${descripcionCorta}</td>
+            <td>${post.weight_prod}</td>
+            <td>${post.dimensions}</td>
+            <td>$${post.final_price?.toFixed(2) || '0.00'}</td>
+            <td><span class="badge ${formatearClaseEstado(post.status)}">${capitalizar(post.status)}</span></td>
+          `;
+
+          tbody.appendChild(row);
+        });
+
+      } catch (error) {
+        console.error('Error al cargar los cargos:', error);
+        document.getElementById('mensaje-vacio').textContent = 'Error al obtener los datos.';
+        document.getElementById('mensaje-vacio').style.display = 'block';
+      }
+    }
+
+    function capitalizar(texto) {
+      return texto.charAt(0).toUpperCase() + texto.slice(1);
+    }
+
+    function formatearClaseEstado(status) {
+      switch (status.toLowerCase()) {
+        case 'entregado': return 'entregado';
+        case 'en tránsito': return 'en-transito';
+        case 'pendiente': return 'pendiente';
+        default: return 'otro-estado';
+      }
+    }
+
+    cargarCargos();
+  </script>
+</body>
+</html>

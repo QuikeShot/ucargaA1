@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Preferencias</title>
+  <link rel="stylesheet" href="preferences.css">
+</head>
+<body>
+  <div class="preferencias-container">
+    <h2>Preferencias del usuario</h2>
+    <form>
+      <section>
+        <h3>Notificaciones</h3>
+        <label><input type="checkbox" name="notif-email" checked> Recibir notificaciones por correo</label>
+        <label><input type="checkbox" name="notif-sms"> Recibir alertas por SMS</label>
+        <label><input type="checkbox" name="notif-app" checked> Notificaciones dentro de la app</label>
+      </section>
+
+      <section>
+        <h3>Idioma de la plataforma</h3>
+        <select name="idioma">
+          <option value="es" selected>Español</option>
+          <option value="en">Inglés</option>
+        </select>
+      </section>
+
+      <section>
+        <h3>Preferencias de visualización</h3>
+        <label><input type="radio" name="tema" value="claro" checked> Tema claro</label>
+        <label><input type="radio" name="tema" value="oscuro"> Tema oscuro</label>
+      </section>
+
+      <section>
+        <h3>Configuración por defecto para envíos</h3>
+        <label><input type="checkbox" name="cargo-apilable"> Cargos apilables por defecto</label>
+        <label><input type="checkbox" name="cargo-compartido"> Permitir compartir envío</label>
+        <label><input type="checkbox" name="cargo-fragil"> Marcar como frágil automáticamente</label>
+      </section>
+
+      <button type="submit">Guardar preferencias</button>
+    </form>
+  </div>
+</body>
+</html>

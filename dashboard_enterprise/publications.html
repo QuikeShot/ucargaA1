@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Marketplace - UCarga</title>
+  <link rel="stylesheet" href="publications.css">
+</head>
+<body>
+  <div class="marketplace-container">
+    <h2>Publicaciones recientes</h2>
+    <div class="publicaciones-grid">
+      <!-- Tarjeta de ejemplo -->
+      <div class="publicacion" onclick="mostrarDetalle(this)">
+        <img src="https://via.placeholder.com/200x150" alt="Imagen del cargo">
+        <div class="info">
+          <p><strong>Peso:</strong> 15kg</p>
+          <p><strong>Dimensiones:</strong> 50x30x40 cm</p>
+          <p><strong>Precio:</strong> $250</p>
+        </div>
+        <div class="detalles" data-detalle="Origen: Calle A #123, CDMX\nDestino: Calle B #456, GDL\nDescripción: Carga frágil con contenido electrónico\nCaracterísticas: Frágil, Apilable">
+        </div>
+      </div>
+
+      <!-- Puedes duplicar más tarjetas según lo necesites -->
+    </div>
+  </div>
+
+  <!-- Ventana flotante -->
+  <div class="modal hidden" id="modalDetalle" style="display: none;">
+    <div class="modal-contenido">
+      <span class="cerrar" onclick="cerrarDetalle()">&times;</span>
+      <div id="contenidoDetalle"></div>
+    </div>
+  </div>
+
+  <script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+      // Asegura que el modal esté oculto al inicio
+      document.getElementById("modalDetalle").style.display = "none";
+    });
+
+    function mostrarDetalle(card) {
+      const detalle = card.querySelector('.detalles').dataset.detalle;
+      const modal = document.getElementById('modalDetalle');
+      document.getElementById('contenidoDetalle').textContent = detalle;
+      modal.classList.remove('hidden');
+      modal.style.display = 'flex';
+    }
+
+    function cerrarDetalle() {
+      const modal = document.getElementById('modalDetalle');
+      modal.classList.add('hidden');
+      modal.style.display = 'none';
+    }
+
+
+  </script>
+</body>
+</html>
